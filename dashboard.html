@@ -1,0 +1,578 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Performance Dashboard</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f1f5f9;
+            color: #1e293b;
+            padding: 25px;
+        }
+
+        .container {
+            max-width: 1350px;
+            margin: auto;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e3a8a, #2563eb);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+
+        header h1 {
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: #dbeafe;
+        }
+
+        .top-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .btn {
+            padding: 11px 18px;
+            text-decoration: none;
+            border: none;
+            border-radius: 7px;
+            color: white;
+            cursor: pointer;
+            display: inline-block;
+            font-size: 14px;
+        }
+
+        .home-btn {
+            background: #475569;
+        }
+
+        .export-btn {
+            background: #059669;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 23px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+            border-left: 5px solid #2563eb;
+        }
+
+        .card h3 {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .card h2 {
+            color: #1e3a8a;
+            font-size: 28px;
+        }
+
+        .chart-box {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+        }
+
+        .chart-box h2 {
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            height: 350px;
+        }
+
+        .records {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+        }
+
+        .records h2 {
+            margin-bottom: 20px;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-form input {
+            flex: 1;
+            min-width: 180px;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+        }
+
+        .search-form button {
+            padding: 12px 20px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1100px;
+        }
+
+        th, td {
+            padding: 13px;
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: #1e3a8a;
+            color: white;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        .edit-btn {
+            background: #f59e0b;
+            color: white;
+            padding: 7px 10px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin: 2px;
+        }
+
+        .delete-btn {
+            background: #dc2626;
+            color: white;
+            padding: 7px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 2px;
+        }
+
+        .predict-btn {
+            background: #059669;
+            color: white;
+            padding: 7px 10px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin: 2px;
+        }
+
+        .success {
+            background: #dcfce7;
+            color: #166534;
+            padding: 12px;
+            border-radius: 7px;
+            margin-bottom: 15px;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 7px;
+            margin-bottom: 15px;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 25px;
+            color: #64748b;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #64748b;
+            line-height: 1.8;
+        }
+
+        @media(max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+
+            header {
+                padding: 20px;
+            }
+
+            .chart-container {
+                height: 280px;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- Header -->
+    <header>
+        <h1>📊 Student Performance Dashboard</h1>
+        <p>Student Academic Performance Monitoring System</p>
+    </header>
+
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="{{ category }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endwith %}
+
+
+    <!-- Navigation -->
+    <div class="top-buttons">
+
+        <a href="{{ url_for('home') }}" class="btn home-btn">
+            🏠 Home
+        </a>
+
+        <a href="{{ url_for('export_csv') }}" class="btn export-btn">
+            📥 Export CSV
+        </a>
+
+    </div>
+
+
+    <!-- Dashboard Cards -->
+    <div class="cards">
+
+        <div class="card">
+            <h3>Total Students</h3>
+            <h2>{{ total }}</h2>
+        </div>
+
+        <div class="card">
+            <h3>Average Attendance</h3>
+            <h2>{{ attendance }}%</h2>
+        </div>
+
+        <div class="card">
+            <h3>Average Exam Marks</h3>
+            <h2>{{ marks }}</h2>
+        </div>
+
+        <div class="card">
+            <h3>Average Assignment</h3>
+            <h2>{{ assignment }}</h2>
+        </div>
+
+        <div class="card">
+            <h3>Passed Students</h3>
+            <h2>{{ passed }}</h2>
+        </div>
+
+        <div class="card">
+            <h3>Failed Students</h3>
+            <h2>{{ failed }}</h2>
+        </div>
+
+        <div class="card">
+            <h3>Pass Percentage</h3>
+            <h2>{{ pass_percentage }}%</h2>
+        </div>
+
+    </div>
+
+
+    <!-- Performance Chart -->
+    {% if not search_mode|default(false) %}
+
+    <div class="chart-box">
+
+        <h2>📈 Student Exam Performance</h2>
+
+        <div class="chart-container">
+            <canvas id="performanceChart"></canvas>
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- Student Records -->
+    <div class="records">
+
+        <h2>👨‍🎓 Student Records</h2>
+
+        <!-- Search Form -->
+        <form action="{{ url_for('search') }}"
+              method="GET"
+              class="search-form">
+
+            <input
+                type="text"
+                name="q"
+                placeholder="Search Student ID, Name or Class..."
+                value="{{ keyword|default('') }}"
+            >
+
+            <button type="submit">
+                🔍 Search
+            </button>
+
+            <a href="{{ url_for('dashboard') }}"
+               class="btn home-btn">
+                Reset
+            </a>
+
+        </form>
+
+
+        <!-- Student Table -->
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Gender</th>
+                        <th>Age</th>
+                        <th>Class</th>
+                        <th>Attendance</th>
+                        <th>Study Hours</th>
+                        <th>Assignment</th>
+                        <th>Exam</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+
+                <tbody>
+
+                    {% for student in students %}
+
+                    <tr>
+
+                        <td>{{ student.id }}</td>
+
+                        <td>{{ student.student_id }}</td>
+
+                        <td>{{ student.student_name }}</td>
+
+                        <td>{{ student.gender }}</td>
+
+                        <td>{{ student.age }}</td>
+
+                        <td>{{ student.class_name }}</td>
+
+                        <td>{{ student.attendance }}%</td>
+
+                        <td>{{ student.study_hours }}</td>
+
+                        <td>{{ student.assignment_score }}</td>
+
+                        <td>{{ student.exam_score }}</td>
+
+
+                        <!-- Pass / Fail -->
+                        <td>
+
+                            {% if student.exam_score >= 40 %}
+
+                                <span style="color:green;font-weight:bold;">
+                                    Pass
+                                </span>
+
+                            {% else %}
+
+                                <span style="color:red;font-weight:bold;">
+                                    Fail
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Actions -->
+                        <td>
+
+                            <a href="{{ url_for('edit_student', student_record_id=student.id) }}"
+                               class="edit-btn">
+                                ✏️ Edit
+                            </a>
+
+
+                            <a href="{{ url_for('student_prediction', student_record_id=student.id) }}"
+                               class="predict-btn">
+                                📊 Predict
+                            </a>
+
+
+                            <form action="{{ url_for('delete_student', student_record_id=student.id) }}"
+                                  method="POST"
+                                  style="display:inline;"
+                                  onsubmit="return confirm('Are you sure you want to delete this student?');">
+
+                                <button type="submit" class="delete-btn">
+                                    🗑 Delete
+                                </button>
+
+                            </form>
+
+                        </td>
+
+                    </tr>
+
+
+                    {% else %}
+
+                    <tr>
+
+                        <td colspan="12" class="empty">
+                            No student records found.
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- Footer -->
+    <footer>
+
+        <p>Student Performance Data Collection System</p>
+
+        <p>Developed using Python, Flask, SQLite, HTML, CSS and JavaScript</p>
+
+    </footer>
+
+</div>
+
+
+<!-- Chart.js -->
+{% if not search_mode|default(false) %}
+
+<script>
+
+const names = {{ chart_names | tojson }};
+const scores = {{ chart_scores | tojson }};
+
+const ctx = document.getElementById('performanceChart');
+
+new Chart(ctx, {
+
+    type: 'bar',
+
+    data: {
+
+        labels: names,
+
+        datasets: [{
+            label: 'Exam Score',
+            data: scores,
+            backgroundColor: '#3b82f6',
+            borderColor: '#1e3a8a',
+            borderWidth: 1,
+            borderRadius: 6
+        }]
+
+    },
+
+    options: {
+
+        responsive: true,
+        maintainAspectRatio: false,
+
+        scales: {
+
+            y: {
+                beginAtZero: true,
+                max: 100,
+                title: {
+                    display: true,
+                    text: 'Exam Marks'
+                }
+            },
+
+            x: {
+                title: {
+                    display: true,
+                    text: 'Student Name'
+                }
+            }
+
+        },
+
+        plugins: {
+
+            legend: {
+                display: true
+            }
+
+        }
+
+    }
+
+});
+
+</script>
+
+{% endif %}
+
+</body>
+</html>

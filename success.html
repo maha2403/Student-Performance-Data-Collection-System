@@ -1,0 +1,33 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Added</title>
+    <link rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Student Added Successfully!</h1>
+
+    <h2>Student Details</h2>
+
+    <p><b>Student ID:</b> {{ student.student_id }}</p>
+    <p><b>Name:</b> {{ student.student_name }}</p>
+    <p><b>Gender:</b> {{ student.gender }}</p>
+    <p><b>Age:</b> {{ student.age }}</p>
+    <p><b>Class:</b> {{ student.class_name }}</p>
+    <p><b>Attendance:</b> {{ student.attendance }}%</p>
+    <p><b>Study Hours:</b> {{ student.study_hours }}</p>
+    <p><b>Assignment Score:</b> {{ student.assignment_score }}</p>
+    <p><b>Exam Score:</b> {{ student.exam_score }}</p>
+
+    <a href="/">Add Another Student</a>
+
+</div>
+
+</body>
+</html>

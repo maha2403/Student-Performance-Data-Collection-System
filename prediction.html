@@ -1,0 +1,203 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Performance Prediction</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f1f5f9;
+            padding: 25px;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3a8a, #2563eb);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            margin-bottom: 10px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+        }
+
+        .card h2 {
+            margin-bottom: 20px;
+            color: #1e3a8a;
+        }
+
+        .details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        .detail {
+            background: #eff6ff;
+            padding: 17px;
+            border-radius: 8px;
+        }
+
+        .detail p {
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .detail h3 {
+            color: #1e3a8a;
+        }
+
+        .prediction {
+            text-align: center;
+            padding: 35px;
+            background: #eff6ff;
+            border-radius: 12px;
+        }
+
+        .prediction h1 {
+            margin: 15px 0;
+            color: #1e3a8a;
+        }
+
+        .suggestion {
+            background: #fef3c7;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            color: #92400e;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 22px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 7px;
+            margin-top: 15px;
+        }
+
+        .btn:hover {
+            background: #1e40af;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <h1>🎓 Student Performance Prediction</h1>
+
+        <p>Academic Performance Analysis System</p>
+
+    </div>
+
+    <div class="card">
+
+        <h2>Student Details</h2>
+
+        <div class="details">
+
+            <div class="detail">
+                <p>Student ID</p>
+                <h3>{{ student.student_id }}</h3>
+            </div>
+
+            <div class="detail">
+                <p>Student Name</p>
+                <h3>{{ student.student_name }}</h3>
+            </div>
+
+            <div class="detail">
+                <p>Class</p>
+                <h3>{{ student.class_name }}</h3>
+            </div>
+
+            <div class="detail">
+                <p>Attendance</p>
+                <h3>{{ student.attendance }}%</h3>
+            </div>
+
+            <div class="detail">
+                <p>Study Hours</p>
+                <h3>{{ student.study_hours }}</h3>
+            </div>
+
+            <div class="detail">
+                <p>Assignment Score</p>
+                <h3>{{ student.assignment_score }}</h3>
+            </div>
+
+            <div class="detail">
+                <p>Exam Score</p>
+                <h3>{{ student.exam_score }}</h3>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <h2>Performance Result</h2>
+
+        <div class="prediction">
+
+            <p>Predicted Performance Category</p>
+
+            <h1>{{ prediction }}</h1>
+
+            <p>Based on the student's current academic records.</p>
+
+        </div>
+
+        <div class="suggestion">
+
+            <h3>💡 Improvement Suggestions</h3>
+
+            <p>{{ suggestion }}</p>
+
+        </div>
+
+    </div>
+
+    <a href="{{ url_for('dashboard') }}" class="btn">
+        ← Back to Dashboard
+    </a>
+
+</div>
+
+</body>
+</html>
